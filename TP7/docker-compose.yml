@@ -1,0 +1,51 @@
+version: '3.7'
+
+services:
+        node1:  
+                image: mariadb:10.4
+                command: --wsrep-new-cluster
+                environment:
+                        MYSQL_ROOT_PASSWORD: password
+                networks:
+                 - maria-cluster
+                volumes:
+                 - ./node1/:/var/lib/mysql
+                 - ./config/conf1.cnf:/etc/mysql/mariadb.conf.d/node1.cnf
+                ports:
+                 - 3306
+                 - 4444
+                 - 4567
+                 - 4568
+
+        node2:
+                image: mariadb:10.4
+                environment:
+                        MYSQL_ROOT_PASSWORD: password
+                networks:
+                 - maria-cluster
+                volumes:
+                 - ./node2/:/var/lib/mysql
+                 - ./config/conf2.cnf:/etc/mysql/mariadb.conf.d/node2.cnf
+                ports:
+                 - 3306
+                 - 4444
+                 - 4567
+                 - 4568
+
+        node3:
+                image: mariadb:10.4
+                environment:
+                        MYSQL_ROOT_PASSWORD: password
+                networks:
+                 - maria-cluster
+                volumes:
+                 - ./node3/:/var/lib/mysql
+                 - ./config/conf3.cnf:/etc/mysql/mariadb.conf.d/node3.cnf
+                ports:
+                 - 3306
+                 - 4444
+                 - 4567
+                 - 4568
+
+networks:
+        maria-cluster:

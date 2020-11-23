@@ -1,0 +1,49 @@
+version:  '3.7'
+
+services:
+    mariadb:
+        image: mariadb:10.4
+        restart: on-failure
+        environment:
+            MYSQL_ROOT_PASSWORD: password
+        networks:
+            - mon-reseau
+        volumes:
+            - ./mariadb:/etc/mariadb
+            - ./script:/data
+        expose: 
+            - 3306
+        ports: 
+            - "3306:3306"
+
+    mysql_exporter:
+        image: prom/mysqld-exporter
+        restart: on-failure
+        environment:
+            DATA_SOURCE_NAME: root:password@(mysql:3306)/
+        networks: 
+            - mon-reseau
+            - exporter
+        ports:
+            - '9104:9104'
+        expose: 
+            - 9104
+        depends_on: 
+            - mariadb
+
+
+    prometheus:
+        image: prom/prometheus
+        restart: on-failure
+        volumes:
+            - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+        networks: 
+            - exporter
+        ports: 
+            - "9090:9090"
+        depends_on: 
+            - mariadb
+
+networks: 
+    mon-reseau:
+    exporter:
